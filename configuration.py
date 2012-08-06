@@ -11,3 +11,4 @@ SECRET_PREFIX_NAME = 'secret_'
 
 INDEX_TITLE = 'Title of the gallery'
 INDEX_IMAGE_NAME = 'logo.jpg'
+THUMBS_SIZE = (180, 120)
