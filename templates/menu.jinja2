@@ -51,24 +51,17 @@
 			</ul>
 		</div>
 
-        <div>
-            <span class="reference">
-                <a href="http://forum.star-killer.net/" target="_blank">Amboy dukes motorbike garage</a>
-				<a href="http://www.deckard.fr/" target="_blank">Deckard es un replicante</a>
-            </span>
-		</div>
-
         <!-- The JavaScript -->
         <script type="text/javascript">
             $(function() {
 				//the loading image
 				var $loader		= $('#st_loading');
-				//the ul element 
+				//the ul element
 				var $list		= $('#st_nav');
 				//the current image being shown
 				var $currImage 	= $('#st_main').children('img:first');
-				
-				//let's load the current image 
+
+				//let's load the current image
 				//and just then display the navigation menu
 				$('<img>').load(function(){
 					$loader.hide();
@@ -79,11 +72,11 @@
 					},
 					1000);
 				}).attr('src',$currImage.attr('src'));
-				
-				//calculates the width of the div element 
+
+				//calculates the width of the div element
 				//where the thumbs are going to be displayed
 				buildThumbs();
-				
+
 				function buildThumbs(){
 					$list.children('li.album').each(function(){
 						var $elem 			= $(this);
@@ -96,9 +89,9 @@
 						makeScrollable($thumbs_wrapper,$thumbs);
 					});
 				}
-				
+
 				//clicking on the menu items (up and down arrow)
-				//makes the thumbs div appear, and hides the current 
+				//makes the thumbs div appear, and hides the current
 				//opened menu (if any)
 				$list.find('.st_arrow_down').live('click',function(){
 					var $this = $(this);
@@ -114,7 +107,7 @@
 					$this.addClass('st_arrow_down').removeClass('st_arrow_up');
 					hideThumbs();
 				});
-				
+
 				//clicking on a thumb, replaces the large image
 				$list.find('.st_thumbs img').bind('click',function(){
 					var $this = $(this);
@@ -134,7 +127,7 @@
 				}).bind('mouseleave',function(){
 					$(this).stop().animate({'opacity':'0.7'});
 				});
-				
+
 				//function to hide the current opened menu
 				function hideThumbs(){
 					$list.find('li.current')
@@ -170,7 +163,7 @@
 					});
 				}
 
-								//edited by malihu 
+								//edited by malihu
 				function FullScreenBackground(theItem){
 					var winWidth=$(window).width();
 					var winHeight=$(window).height();
@@ -188,7 +181,7 @@
 						$(theItem).css("margin-left",winWidth / 2 - $(theItem).width() / 2);
 						$(theItem).css("margin-top",winHeight / 2 - $(theItem).height() / 2);
 				}
-				
+
 				$(window).resize(function() {
 					FullScreenBackground('.st_main img.st_preview');
 				});

@@ -35,11 +35,12 @@
 
     <body>
 		<div id="st_main" class="st_main">
-
 			<img src="{{ gallery_url }}{{ image_list[0] }}" alt="" class="st_preview" style="display:none;"/>
 			<div class="st_overlay"></div>
 			<h1>{{ title }}</h1>
-			<div id="st_loading" class="st_loading"><span>Loading...</span></div>
+		</div>
+
+        <div>
 			<ul id="st_nav" class="st_navigation">
 				<li class="album">
 					<span class="st_link">Pictures<span class="st_arrow_down"></span></span>
@@ -51,24 +52,10 @@
 						</div>
 					</div>
 				</li>
-
-				<li>
-					<span class="st_link">About<span class="st_arrow_down"></span></span>
-					<div class="st_about st_thumbs_wrapper">
-						<div class="st_subcontent">
-							<pre>
-								{{ readme }}
-							</pre>
-						</div>
-					</div>
-				</li>
 			</ul>
-		</div>
-
-        <div>
             <span class="reference">
-                <a href="http://forum.star-killer.net/" target="_blank">Amboy dukes motorbike garage</a>
-				<a href="http://www.deckard.fr/" target="_blank">Deckard es un replicante</a>
+                <a href="git://github.com/javaguirre/Static-Gallery-Generator.git" target="_blank">Fork me!</a>
+                <a href="http://javaguirre.net" target="_blank">JavAguirre.net</a>
             </span>
 		</div>
 
@@ -76,16 +63,14 @@
         <script type="text/javascript">
             $(function() {
 				//the loading image
-				var $loader		= $('#st_loading');
-				//the ul element 
+				//the ul element
 				var $list		= $('#st_nav');
 				//the current image being shown
 				var $currImage 	= $('#st_main').children('img:first');
-				
-				//let's load the current image 
+
+				//let's load the current image
 				//and just then display the navigation menu
 				$('<img>').load(function(){
-					$loader.hide();
 					$currImage.fadeIn(3000);
 					//slide out the menu
 					setTimeout(function(){
@@ -93,11 +78,11 @@
 					},
 					1000);
 				}).attr('src',$currImage.attr('src'));
-				
-				//calculates the width of the div element 
+
+				//calculates the width of the div element
 				//where the thumbs are going to be displayed
 				buildThumbs();
-				
+
 				function buildThumbs(){
 					$list.children('li.album').each(function(){
 						var $elem 			= $(this);
@@ -110,9 +95,9 @@
 						makeScrollable($thumbs_wrapper,$thumbs);
 					});
 				}
-				
+
 				//clicking on the menu items (up and down arrow)
-				//makes the thumbs div appear, and hides the current 
+				//makes the thumbs div appear, and hides the current
 				//opened menu (if any)
 				$list.find('.st_arrow_down').live('click',function(){
 					var $this = $(this);
@@ -128,16 +113,14 @@
 					$this.addClass('st_arrow_down').removeClass('st_arrow_up');
 					hideThumbs();
 				});
-				
+
 				//clicking on a thumb, replaces the large image
 				$list.find('.st_thumbs img').bind('click',function(){
 					var $this = $(this);
-					$loader.show();
 					$('<img class="st_preview"/>').load(function(){
 						var $this = $(this);
 						var $currImage = $('#st_main').children('img:first');
 						$this.insertBefore($currImage);
-						$loader.hide();
 						FullScreenBackground(this);
 						$currImage.fadeOut(2000,function(){
 							$(this).remove();
@@ -148,7 +131,7 @@
 				}).bind('mouseleave',function(){
 					$(this).stop().animate({'opacity':'0.7'});
 				});
-				
+
 				//function to hide the current opened menu
 				function hideThumbs(){
 					$list.find('li.current')
@@ -184,7 +167,7 @@
 					});
 				}
 
-								//edited by malihu 
+								//edited by malihu
 				function FullScreenBackground(theItem){
 					var winWidth=$(window).width();
 					var winHeight=$(window).height();
@@ -193,16 +176,16 @@
 					var picHeight = imageHeight / imageWidth;
 					var picWidth = imageWidth / imageHeight;
 					if ((winHeight / winWidth) < picHeight) {
-						$(theItem).css("width",winWidth);
-						$(theItem).css("height",picHeight*winWidth);
+						$(theItem).css("width", winWidth);
+						$(theItem).css("height", picHeight*winWidth);
 					} else {
-						$(theItem).css("height",winHeight);
-						$(theItem).css("width",picWidth*winHeight);
+						$(theItem).css("height", winHeight);
+						$(theItem).css("width", picWidth*winHeight);
 					};
 						$(theItem).css("margin-left",winWidth / 2 - $(theItem).width() / 2);
 						$(theItem).css("margin-top",winHeight / 2 - $(theItem).height() / 2);
 				}
-				
+
 				$(window).resize(function() {
 					FullScreenBackground('.st_main img.st_preview');
 				});
