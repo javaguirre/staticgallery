@@ -51,6 +51,9 @@ def create_gallery():
             if THUMBS_NAME in image_list:
                 image_list.remove(THUMBS_NAME)
 
+            if INDEX_HTML in image_list:
+                image_list.remove(INDEX_HTML)
+
             if not os.path.exists(thumbs_path):
                 os.mkdir(thumbs_path)
 
