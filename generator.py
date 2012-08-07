@@ -45,8 +45,8 @@ def create_gallery():
                 image_full.thumbnail(THUMBS_SIZE, Image.ANTIALIAS)
                 image_full.save(image_thumb_path, image_full.format)
 
-            gallery_url = gallery_elem_path
-            thumbs_url = "/".join([gallery_elem_path, THUMBS_NAME])
+            gallery_url = "/".join(["/" + STATIC_NAME, GALLERY_NAME, elem + "/"])
+            thumbs_url = "".join([gallery_url, THUMBS_NAME, "/"])
             template = env.get_template('base.jinja2')
             template_content = template.render(title=elem, thumbs_url=thumbs_url, gallery_url=gallery_url, image_list=image_list)
 
