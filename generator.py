@@ -1,5 +1,5 @@
 """
-Small web service for static gallery generation.
+    Static Gallery Generator
 
 """
 
@@ -11,11 +11,31 @@ import sys
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), os.path.pardir))
+env = Environment(loader=PackageLoader('static_gallery_generator', 'templates'))
+
+
+def create_menu():
+        galleries = []
+        gallery_path = os.path.join(ACTUAL_PATH, GALLERY_NAME)
+
+        for gallery in os.listdir(gallery_path):
+            gallery_elem_path = os.path.join(gallery_path, gallery)
+
+            if os.path.isdir(gallery_elem_path):
+                galleries.append({"title": gallery, "url": "/".join(["/" + GALLERY_NAME, gallery, "index.html"])})
+
+        template = env.get_template('menu.jinja2')
+        template_content = template.render(title="MENU", galleries=galleries)
+
+        # save static file
+        new_file = file("/".join([gallery_path, "index.html"]), 'w')
+        new_file.write(template_content)
+        new_file.close()
+
 
 
 def create_gallery():
-    env = Environment(loader=PackageLoader('static_gallery_generator', 'templates'))
-    gallery_path = os.path.join(ACTUAL_PATH, STATIC_NAME, GALLERY_NAME)
+    gallery_path = os.path.join(ACTUAL_PATH, GALLERY_NAME)
 
     for elem in os.listdir(gallery_path):
         gallery_elem_path = os.path.join(gallery_path, elem)
@@ -45,7 +65,7 @@ def create_gallery():
                 image_full.thumbnail(THUMBS_SIZE, Image.ANTIALIAS)
                 image_full.save(image_thumb_path, image_full.format)
 
-            gallery_url = "/".join(["/" + STATIC_NAME, GALLERY_NAME, elem + "/"])
+            gallery_url = "/".join(["/" + GALLERY_NAME, elem + "/"])
             thumbs_url = "".join([gallery_url, THUMBS_NAME, "/"])
             template = env.get_template('base.jinja2')
             template_content = template.render(title=elem, thumbs_url=thumbs_url, gallery_url=gallery_url, image_list=image_list)
@@ -56,4 +76,5 @@ def create_gallery():
             new_file.close()
 
 if __name__ == '__main__':
-    create_gallery()
+    #create_gallery()
+    create_menu()

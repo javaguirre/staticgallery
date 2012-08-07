@@ -2,7 +2,6 @@ import os
 
 DEBUG = True
 ACTUAL_PATH = os.path.dirname(__file__)
-STATIC_NAME = 'static'
 GALLERY_NAME = 'gallery'
 THUMBS_NAME = 'thumbs'
 README_NAME = 'readme'
