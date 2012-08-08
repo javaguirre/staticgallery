@@ -1,14 +1,13 @@
 Static Gallery
 ==============
 
-Description
------------
+Static Web Gallery Generator using Jinja2
 
-Small web service for static gallery generation.
+Template selection
 
-Use flask and PIL.
+TODO
+====
 
-Author
-------
-
-Samy Duc aka nobunaga.duc@gmail.com
+- Select template by command line
+- Force rebuild gallery (or not)
+- Update the gallery instead of creating again entirely
