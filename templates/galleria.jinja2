@@ -1,7 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html>
     <head>
         <title>{{ title }}</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=0.5,user-scalable=no">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="description" content="{{ title }}" />
 		<link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon"/>
@@ -18,24 +20,18 @@
     </head>
 
     <body>
-		<div id="st_main" class="st_main">
-			<div class="st_overlay"></div>
-			<h1>{{ title }}</h1>
-		</div>
-
-        <div id="galleria" class=""  style="height: 500px;">
+        <div id="st_main" class="st_main">
+            <div class="st_overlay"></div>
+                <h5>{{ title }} - <a href="/index.html">Volver al menu</a></h5>
+            </div>
+        </div>
+        <div id="galleria" class=""  style="height: 600px;">
             {% for image in image_list %}
                 <a href="{{ gallery_url}}{{ image }}">
                     <img src="{{ thumbs_url }}{{ image }}" alt="{{ gallery_url }}{{ image }}"/>
                 </a>
             {% endfor %}
         </div>
-        <span class="reference">
-            <a href="http://github.com/javaguirre/static_gallery_generator.git" target="_blank">Fork me!</a>
-            <a href="http://javaguirre.net" target="_blank">JavAguirre.net</a>
-        </span>
-
-        <!-- The JavaScript -->
         <script>
             $(function() {
                 Galleria.loadTheme('/static/js/themes/classic/galleria.classic.js');
