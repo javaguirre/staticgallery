@@ -55,7 +55,7 @@ def prepare_images(gallery_path, image_list):
         if image_exif_dict is not None:
             exif = {}
 
-            for k, v in image_exif_dict:
+            for k, v in image_exif_dict.items():
                 try:
                     if ExifTags.TAGS[k] == 'Orientation':
                         exif[ExifTags.TAGS[k]] = v
