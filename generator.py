@@ -29,9 +29,9 @@ def generate_html_output(path, template_name, arguments):
     new_file.close()
 
 
-def create_menu(template_name):
+def create_menu(dst_path, template_name):
         galleries = []
-        gallery_path = DST_GALLERY_PATH
+        gallery_path = dst_path
 
         for gallery in os.listdir(gallery_path):
             gallery_elem_path = os.path.join(gallery_path, gallery)
@@ -45,9 +45,9 @@ def create_menu(template_name):
                              {"title": "Album", "galleries": galleries})
 
 
-def prepare_images(gallery_name, image_list):
-    src_gallery = os.path.join(SRC_GALLERY_PATH, gallery_name)
-    dst_gallery = os.path.join(DST_GALLERY_PATH, gallery_name)
+def prepare_images(src_path, dst_path, gallery_name, image_list):
+    src_gallery = os.path.join(src_path, gallery_name)
+    dst_gallery = os.path.join(dst_path, gallery_name)
     thumbs_path = os.path.join(dst_gallery, THUMBS_NAME)
 
     if not os.path.exists(dst_gallery):
@@ -93,17 +93,17 @@ def prepare_images(gallery_name, image_list):
             image_full.save(image_thumb_path, image_full.format)
 
 
-def create_gallery(template_name):
-    gallery_path = SRC_GALLERY_PATH
+def create_gallery(src_path, dst_path, template_name):
+    gallery_path = src_path
 
     for gallery_name in os.listdir(gallery_path):
         gallery_elem_path = os.path.join(gallery_path, gallery_name)
-        dst_gallery_path = os.path.join(DST_GALLERY_PATH, gallery_name)
+        dst_gallery_path = os.path.join(dst_path, gallery_name)
 
         if os.path.isdir(gallery_elem_path):
             image_list = os.listdir(gallery_elem_path)
             image_list.sort()
-            prepare_images(gallery_name, image_list)
+            prepare_images(src_path, dst_path, gallery_name, image_list)
 
             gallery_url = "".join(["/",  gallery_name, "/"])
             thumbs_url = "".join([gallery_url, THUMBS_NAME, "/"])
@@ -131,15 +131,18 @@ def exec_server(directory=DST_GALLERY_PATH, port=8000):
 def process_call(arguments):
     """ Process call arguments """
 
+    src_path = arguments.src or SRC_GALLERY_PATH
+    dst_path = arguments.dst or DST_GALLERY_PATH
+
     if arguments.template_gallery is not None:
-        create_gallery(arguments.template_gallery)
+        create_gallery(src_path, dst_path, arguments.template_gallery)
     else:
-        create_gallery("galleria.jinja2")
+        create_gallery(src_path, dst_path, "galleria.jinja2")
 
     if arguments.template_menu is not None:
-        create_menu(arguments.template_menu)
+        create_menu(dst_path, arguments.template_menu)
     else:
-        create_menu("menu.jinja2")
+        create_menu(dst_path, "menu.jinja2")
 
     if arguments.server is not None:
         if arguments.port is not None:
