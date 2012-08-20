@@ -12,7 +12,8 @@ import sys
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), os.path.pardir))
-env = Environment(loader=PackageLoader('static_gallery_generator', 'templates'))
+env = Environment(loader=PackageLoader('static_gallery_generator',
+                  'templates'))
 
 
 def generate_html_output(path, template_name, args):
@@ -25,28 +26,36 @@ def generate_html_output(path, template_name, args):
     new_file.close()
 
 
-def create_menu():
+def create_menu(template_name):
         galleries = []
-        gallery_path = os.path.join(ACTUAL_PATH, GALLERY_NAME)
+        gallery_path = DST_GALLERY_PATH
 
         for gallery in os.listdir(gallery_path):
             gallery_elem_path = os.path.join(gallery_path, gallery)
 
             if os.path.isdir(gallery_elem_path) and gallery != "static":
-                galleries.append({"title": gallery, "url": "/".join(["/" + gallery, "index.html"])})
+                galleries.append({"title": gallery,
+                                  "url": "/".join(["/" + gallery, "index.html"])})
 
-        generate_html_output("/".join([gallery_path, "index.html"]), "menu.jinja2",
+        generate_html_output("/".join([gallery_path, "index.html"]),
+                             template_name,
                              {"title": "Album", "galleries": galleries})
 
-def prepare_images(gallery_path, image_list):
-    thumbs_path = os.path.join(gallery_path, THUMBS_NAME)
+
+def prepare_images(gallery_name, image_list):
+    src_gallery = os.path.join(SRC_GALLERY_PATH, gallery_name)
+    dst_gallery = os.path.join(DST_GALLERY_PATH, gallery_name)
+    thumbs_path = os.path.join(dst_gallery, THUMBS_NAME)
+
+    if not os.path.exists(dst_gallery):
+        os.mkdir(dst_gallery)
 
     if not os.path.exists(thumbs_path):
         os.mkdir(thumbs_path)
 
     for image in image_list:
         # create thumbs
-        image_path = os.path.join(gallery_path, image)
+        image_path = os.path.join(src_gallery, image)
         image_thumb_path = os.path.join(thumbs_path, image)
 
         image_full = Image.open(os.path.normcase(image_path))
@@ -61,53 +70,48 @@ def prepare_images(gallery_path, image_list):
                         exif[ExifTags.TAGS[k]] = v
                         break
                 except KeyError:
-                    pass
+                    print("the image has no metadata")
 
-            change_orientation = False
             if exif['Orientation'] == 3:
-                image_full=image_full.rotate(180, expand=True)
-                change_orientation = True
+                image_full = image_full.rotate(180, expand=True)
             elif exif['Orientation'] == 6:
-                image_full=image_full.rotate(270, expand=True)
-                change_orientation = True
+                image_full = image_full.rotate(270, expand=True)
             elif exif['Orientation'] == 8:
-                image_full=image_full.rotate(90, expand=True)
-                change_orientation = True
+                image_full = image_full.rotate(90, expand=True)
 
-            # FIXME Original image override, maybe we don't want to override original images
-            if change_orientation:
-                # FIXME PIL overrides original metadata when saving, we want to keep it
-                image_full.save(image_path, image_full.format)
+        image_dst_path = os.path.join(dst_gallery, image)
+        # TODO An option to rewrite images
+        if not os.path.exists(image_dst_path):
+            # FIXME PIL overrides original metadata when saving, we want to keep it
+            image_full.save(image_dst_path, image_full.format)
 
         if not os.path.exists(os.path.join(image_thumb_path)):
             image_full.thumbnail(THUMBS_SIZE, Image.ANTIALIAS)
             image_full.save(image_thumb_path, image_full.format)
 
 
-def create_gallery():
-    gallery_path = os.path.join(ACTUAL_PATH, GALLERY_NAME)
+def create_gallery(template_name):
+    gallery_path = SRC_GALLERY_PATH
 
     for gallery_name in os.listdir(gallery_path):
         gallery_elem_path = os.path.join(gallery_path, gallery_name)
+        dst_gallery_path = os.path.join(DST_GALLERY_PATH, gallery_name)
 
-        if os.path.isdir(gallery_elem_path) and gallery_name != "static":
+        if os.path.isdir(gallery_elem_path):
             image_list = os.listdir(gallery_elem_path)
-
-            if THUMBS_NAME in image_list:
-                image_list.remove(THUMBS_NAME)
-
-            if INDEX_HTML in image_list:
-                image_list.remove(INDEX_HTML)
-
             image_list.sort()
-
-            prepare_images(gallery_elem_path, image_list)
+            prepare_images(gallery_name, image_list)
 
             gallery_url = "".join(["/",  gallery_name, "/"])
             thumbs_url = "".join([gallery_url, THUMBS_NAME, "/"])
-            generate_html_output("/".join([gallery_elem_path, "index.html"]), "galleria.jinja2",
-                                 {"title": gallery_name.capitalize(), "thumbs_url": thumbs_url, "gallery_url": gallery_url, "image_list": image_list})
+
+            generate_html_output("/".join([dst_gallery_path, "index.html"]),
+                                 template_name,
+                                 {"title": gallery_name.capitalize(),
+                                  "thumbs_url": thumbs_url,
+                                  "gallery_url": gallery_url,
+                                  "image_list": image_list})
 
 if __name__ == '__main__':
-    create_menu()
-    create_gallery()
+    create_gallery("galleria.jinja2")
+    create_menu("menu.jinja2")
