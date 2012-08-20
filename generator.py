@@ -9,6 +9,7 @@ import os
 from jinja2 import Environment, PackageLoader
 from configuration import *
 import sys
+import argparse
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), os.path.pardir))
@@ -16,9 +17,9 @@ env = Environment(loader=PackageLoader('static_gallery_generator',
                   'templates'))
 
 
-def generate_html_output(path, template_name, args):
+def generate_html_output(path, template_name, arguments):
     template = env.get_template(template_name)
-    template_content = template.render(**args)
+    template_content = template.render(**arguments)
 
     # save static file
     new_file = file(path, 'w')
@@ -112,6 +113,36 @@ def create_gallery(template_name):
                                   "gallery_url": gallery_url,
                                   "image_list": image_list})
 
+
+def process_call(arguments):
+    """ Process call arguments """
+
+    if arguments.template_gallery is not None:
+        create_gallery(arguments.template_gallery)
+    else:
+        create_gallery("galleria.jinja2")
+
+    if arguments.template_menu is not None:
+        create_menu(arguments.template_menu)
+    else:
+        create_menu("menu.jinja2")
+
+
+def main():
+    """Parses app command line options """
+    parser = argparse.ArgumentParser(description='Static Gallery Generator Options.')
+    parser.add_argument('--template-gallery',
+                        help='Choose the name of the template for the gallery')
+    parser.add_argument('--template-menu',
+                        help='Choose the template for the menu')
+    parser.add_argument('--src',
+                        help='Source directory for the gallery')
+    parser.add_argument('--dst',
+                        help='Destiny when the web gallery will be generated')
+
+    arguments = parser.parse_args()
+    process_call(arguments)
+
+
 if __name__ == '__main__':
-    create_gallery("galleria.jinja2")
-    create_menu("menu.jinja2")
+    main()
