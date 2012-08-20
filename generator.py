@@ -133,22 +133,15 @@ def process_call(arguments):
 
     src_path = arguments.src or SRC_GALLERY_PATH
     dst_path = arguments.dst or DST_GALLERY_PATH
+    template_gallery = arguments.template_gallery or "galleria.jinja2"
+    template_menu = arguments.template_menu or "menu.jinja2"
+    port = int(arguments.port) or 8000
 
-    if arguments.template_gallery is not None:
-        create_gallery(src_path, dst_path, arguments.template_gallery)
-    else:
-        create_gallery(src_path, dst_path, "galleria.jinja2")
-
-    if arguments.template_menu is not None:
-        create_menu(dst_path, arguments.template_menu)
-    else:
-        create_menu(dst_path, "menu.jinja2")
+    create_gallery(src_path, dst_path, template_gallery)
+    create_menu(dst_path, template_menu)
 
     if arguments.server is not None:
-        if arguments.port is not None:
-            exec_server(port=int(arguments.port))
-        else:
-            exec_server()
+        exec_server(port=port)
 
 
 def main():
@@ -167,7 +160,7 @@ def main():
                         help='Executes a server')
     parser.add_argument('--port',
                         help='Choose the port for the server, by default 8000')
-    parser.add_argument('--reload',
+    parser.add_argument('--reload', action='store_true',
                         help="Reload all galleries, even if they exist in the destiny")
 
     arguments = parser.parse_args()
