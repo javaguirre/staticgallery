@@ -45,7 +45,7 @@ def create_menu(dst_path, template_name):
                              {"title": "Album", "galleries": galleries})
 
 
-def prepare_images(src_path, dst_path, gallery_name, image_list):
+def prepare_images(src_path, dst_path, gallery_name, image_list, reload_gallery):
     src_gallery = os.path.join(src_path, gallery_name)
     dst_gallery = os.path.join(dst_path, gallery_name)
     thumbs_path = os.path.join(dst_gallery, THUMBS_NAME)
@@ -84,16 +84,16 @@ def prepare_images(src_path, dst_path, gallery_name, image_list):
 
         image_dst_path = os.path.join(dst_gallery, image)
         # TODO An option to rewrite images
-        if not os.path.exists(image_dst_path):
+        if not os.path.exists(image_dst_path) or reload_gallery:
             # FIXME PIL overrides original metadata when saving, we want to keep it
             image_full.save(image_dst_path, image_full.format)
 
-        if not os.path.exists(os.path.join(image_thumb_path)):
+        if not os.path.exists(os.path.join(image_thumb_path)) or reload_gallery:
             image_full.thumbnail(THUMBS_SIZE, Image.ANTIALIAS)
             image_full.save(image_thumb_path, image_full.format)
 
 
-def create_gallery(src_path, dst_path, template_name):
+def create_gallery(src_path, dst_path, template_name, reload_gallery):
     gallery_path = src_path
 
     for gallery_name in os.listdir(gallery_path):
@@ -103,7 +103,7 @@ def create_gallery(src_path, dst_path, template_name):
         if os.path.isdir(gallery_elem_path):
             image_list = os.listdir(gallery_elem_path)
             image_list.sort()
-            prepare_images(src_path, dst_path, gallery_name, image_list)
+            prepare_images(src_path, dst_path, gallery_name, image_list, reload_gallery)
 
             gallery_url = "".join(["/",  gallery_name, "/"])
             thumbs_url = "".join([gallery_url, THUMBS_NAME, "/"])
@@ -135,12 +135,17 @@ def process_call(arguments):
     dst_path = arguments.dst or DST_GALLERY_PATH
     template_gallery = arguments.template_gallery or "galleria.jinja2"
     template_menu = arguments.template_menu or "menu.jinja2"
-    port = int(arguments.port) or 8000
+    reload_gallery = arguments.reload
 
-    create_gallery(src_path, dst_path, template_gallery)
+    if arguments.port is not None:
+        port = int(arguments.port)
+    else:
+        port = 8000
+
+    create_gallery(src_path, dst_path, template_gallery, reload_gallery)
     create_menu(dst_path, template_menu)
 
-    if arguments.server is not None:
+    if arguments.server:
         exec_server(port=port)
 
 
