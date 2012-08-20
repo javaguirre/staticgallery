@@ -10,6 +10,8 @@ from jinja2 import Environment, PackageLoader
 from configuration import *
 import sys
 import argparse
+import SimpleHTTPServer
+import SocketServer
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), os.path.pardir))
@@ -114,6 +116,18 @@ def create_gallery(template_name):
                                   "image_list": image_list})
 
 
+def exec_server(directory=DST_GALLERY_PATH, port=8000):
+    """ Executes a server for development or simple gallery viewing """
+
+    os.chdir(directory)
+    print("Changing to the gallery directory... \n%s" % directory)
+    handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+    httpd = SocketServer.TCPServer(("", port), handler)
+
+    print("Serving at port %d" % port)
+    httpd.serve_forever()
+
+
 def process_call(arguments):
     """ Process call arguments """
 
@@ -127,10 +141,17 @@ def process_call(arguments):
     else:
         create_menu("menu.jinja2")
 
+    if arguments.server is not None:
+        if arguments.port is not None:
+            exec_server(port=int(arguments.port))
+        else:
+            exec_server()
+
 
 def main():
     """Parses app command line options """
     parser = argparse.ArgumentParser(description='Static Gallery Generator Options.')
+
     parser.add_argument('--template-gallery',
                         help='Choose the name of the template for the gallery')
     parser.add_argument('--template-menu',
@@ -139,6 +160,12 @@ def main():
                         help='Source directory for the gallery')
     parser.add_argument('--dst',
                         help='Destiny when the web gallery will be generated')
+    parser.add_argument('--server', action='store_true',
+                        help='Executes a server')
+    parser.add_argument('--port',
+                        help='Choose the port for the server, by default 8000')
+    parser.add_argument('--reload',
+                        help="Reload all galleries, even if they exist in the destiny")
 
     arguments = parser.parse_args()
     process_call(arguments)
