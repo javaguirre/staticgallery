@@ -27,7 +27,7 @@ This is the command line help:
       --template-menu TEMPLATE_MENU
                         Choose the template for the menu
       --src SRC             Source directory for the galleries
-      --dst DST             Destiny when the web galleries will be generated
+      --dst DST             Destiny where the web galleries will be generated
       --server              Executes a server
       --port PORT           Choose the port for the server, by default 8000
       --reload              Reload all galleries, even if they exist in the

@@ -160,7 +160,7 @@ def main():
     parser.add_argument('--src',
                         help='Source directory for the gallery')
     parser.add_argument('--dst',
-                        help='Destiny when the web gallery will be generated')
+                        help='Destiny where the web gallery will be generated')
     parser.add_argument('--server', action='store_true',
                         help='Executes a server')
     parser.add_argument('--port',
