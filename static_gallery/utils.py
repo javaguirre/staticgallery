@@ -135,6 +135,13 @@ def process_call(arguments):
     else:
         port = 8000
 
+    if not os.path.exists(src_path):
+        print 'The source path does not exist: %s' % src_path
+        return False
+    if not os.path.exists(dst_path):
+        print 'The destiny path does not exist: %s' % dst_path
+        return False
+
     create_gallery(src_path, dst_path, template_gallery, reload_gallery)
     create_menu(dst_path, template_menu)
 
