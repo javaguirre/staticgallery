@@ -1,21 +1,14 @@
-"""
-    Static Gallery Generator
-
-"""
-
-from PIL import Image
-import ExifTags
 import os
-from jinja2 import Environment, PackageLoader
-from configuration import *
-import sys
-import argparse
 import SimpleHTTPServer
 import SocketServer
+from PIL import Image
+import ExifTags
+from jinja2 import Environment, PackageLoader
+
+from configuration import *
 
 
-sys.path.append(os.path.join(os.path.dirname(__file__), os.path.pardir))
-env = Environment(loader=PackageLoader('static_gallery_generator',
+env = Environment(loader=PackageLoader('static_gallery',
                   'templates'))
 
 
@@ -147,30 +140,3 @@ def process_call(arguments):
 
     if arguments.server:
         exec_server(port=port)
-
-
-def main():
-    """Parses app command line options """
-    parser = argparse.ArgumentParser(description='Static Gallery Generator Options.')
-
-    parser.add_argument('--template-gallery',
-                        help='Choose the name of the template for the gallery')
-    parser.add_argument('--template-menu',
-                        help='Choose the template for the menu')
-    parser.add_argument('--src',
-                        help='Source directory for the gallery')
-    parser.add_argument('--dst',
-                        help='Destiny where the web gallery will be generated')
-    parser.add_argument('--server', action='store_true',
-                        help='Executes a server')
-    parser.add_argument('--port',
-                        help='Choose the port for the server, by default 8000')
-    parser.add_argument('--reload', action='store_true',
-                        help="Reload all galleries, even if they exist in the destiny")
-
-    arguments = parser.parse_args()
-    process_call(arguments)
-
-
-if __name__ == '__main__':
-    main()

@@ -6,7 +6,7 @@ setup(
     author='Javier Aguirre',
     author_email='contacto@javaguirre.net',
     packages=['static_gallery'],
-    scripts=['bin/generator.py'],
+    scripts=['bin/staticgallery.py'],
     url='http://pypi.python.org/pypi/StaticGallery/',
     license='LICENSE.txt',
     description='Static gallery generation using Jinja2 ',
