@@ -5,12 +5,16 @@ import SocketServer
 from PIL import Image
 import ExifTags
 from jinja2 import Environment, FileSystemLoader
-import mimetypes
+from mimetypes import guess_type
 
 from configuration import *
 
 
-loader = FileSystemLoader(TEMPLATES_PATH)
+if os.path.exists(TEMPLATES_PATH):
+    loader = FileSystemLoader(TEMPLATES_PATH)
+else:
+    loader = FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates'))
+
 env = Environment(loader=loader)
 
 
@@ -55,6 +59,10 @@ def prepare_images(src_path, dst_path, gallery_name, image_list, reload_gallery)
     for image in image_list:
         # create thumbs
         image_path = os.path.join(src_gallery, image)
+
+        if not guess_type(image_path)[0] in SUPPORTED_IMAGES:
+            continue
+
         image_thumb_path = os.path.join(thumbs_path, image)
 
         image_full = Image.open(os.path.normcase(image_path))
@@ -129,8 +137,9 @@ def process_call(arguments):
 
     src_path = arguments.src or SRC_GALLERY_PATH
     dst_path = arguments.dst or DST_GALLERY_PATH
-    template_gallery = arguments.template_gallery or "galleria.jinja2"
-    template_menu = arguments.template_menu or "menu.jinja2"
+    static_path = os.path.join(DST_GALLERY_PATH, 'static')
+    template_gallery = arguments.template_gallery or GALLERY_TPL
+    template_menu = arguments.template_menu or MENU_TPL
     reload_gallery = arguments.reload
 
     if arguments.port is not None:
@@ -147,6 +156,10 @@ def process_call(arguments):
 
     create_gallery(src_path, dst_path, template_gallery, reload_gallery)
     create_menu(dst_path, template_menu)
+
+    if not os.path.exists(static_path):
+        os.symlink(os.path.join(os.path.dirname(__file__), 'static', 'static'),
+                   static_path)
 
     if arguments.server:
         exec_server(port=port)

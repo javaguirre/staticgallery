@@ -3,6 +3,9 @@ import os
 from distutils.core import setup
 
 
+CONFIG_PATH = os.path.expanduser('~/.staticgallery')
+
+
 def get_package_data(package):
     """
     Return all files under the root package, that are not in a
@@ -27,6 +30,9 @@ setup(
     scripts=['bin/staticgallery'],
     packages=['static_gallery'],
     package_data=get_package_data('static_gallery'),
+    data_files=[(CONFIG_PATH, ['data/config.cfg']),
+                ('/'.join([CONFIG_PATH, 'site']), [])
+                ],
     url='https://github.com/javaguirre/staticgallery',
     license='LICENSE.txt',
     description='Static gallery generation using Jinja2 ',
