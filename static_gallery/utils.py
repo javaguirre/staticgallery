@@ -18,6 +18,19 @@ else:
 env = Environment(loader=loader)
 
 
+def get_image_list(gallery_path, image_list):
+    image_list.sort()
+    image_out = []
+
+    for image in image_list:
+        image_path = os.path.join(gallery_path, image)
+        if not guess_type(image_path)[0] in SUPPORTED_IMAGES:
+            continue
+        image_out.append(image)
+
+    return image_out
+
+
 def generate_html_output(path, template_name, arguments):
     template = env.get_template(template_name)
     template_content = template.render(**arguments)
@@ -40,6 +53,7 @@ def create_menu(dst_path, template_name):
                                   "url": "/".join(["/" + gallery, "index.html"])
                                   })
 
+        galleries = sorted(galleries, key=lambda elem: elem['title'])
         generate_html_output("/".join([gallery_path, "index.html"]),
                              template_name,
                              {"title": "Album", "galleries": galleries})
@@ -59,10 +73,6 @@ def prepare_images(src_path, dst_path, gallery_name, image_list, reload_gallery)
     for image in image_list:
         # create thumbs
         image_path = os.path.join(src_gallery, image)
-
-        if not guess_type(image_path)[0] in SUPPORTED_IMAGES:
-            continue
-
         image_thumb_path = os.path.join(thumbs_path, image)
 
         image_full = Image.open(os.path.normcase(image_path))
@@ -105,8 +115,7 @@ def create_gallery(src_path, dst_path, template_name, reload_gallery):
         dst_gallery_path = os.path.join(dst_path, gallery_name)
 
         if os.path.isdir(gallery_elem_path):
-            image_list = os.listdir(gallery_elem_path)
-            image_list.sort()
+            image_list = get_image_list(gallery_path, os.listdir(gallery_elem_path))
             prepare_images(src_path, dst_path, gallery_name, image_list, reload_gallery)
 
             gallery_url = "".join(["/",  gallery_name, "/"])
