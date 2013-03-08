@@ -158,7 +158,7 @@ def process_call(arguments):
     create_menu(dst_path, template_menu)
 
     if not os.path.exists(static_path):
-        os.symlink(os.path.join(os.path.dirname(__file__), 'static', 'static'),
+        os.symlink(os.path.join(os.path.dirname(__file__), 'static'),
                    static_path)
 
     if arguments.server:
