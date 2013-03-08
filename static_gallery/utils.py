@@ -1,15 +1,17 @@
 import os
 import SimpleHTTPServer
 import SocketServer
+
 from PIL import Image
 import ExifTags
-from jinja2 import Environment, PackageLoader
+from jinja2 import Environment, FileSystemLoader
+import mimetypes
 
 from configuration import *
 
 
-env = Environment(loader=PackageLoader('static_gallery',
-                  'templates'))
+loader = FileSystemLoader(TEMPLATES_PATH)
+env = Environment(loader=loader)
 
 
 def generate_html_output(path, template_name, arguments):
@@ -31,7 +33,8 @@ def create_menu(dst_path, template_name):
 
             if os.path.isdir(gallery_elem_path) and gallery != "static":
                 galleries.append({"title": gallery,
-                                  "url": "/".join(["/" + gallery, "index.html"])})
+                                  "url": "/".join(["/" + gallery, "index.html"])
+                                  })
 
         generate_html_output("/".join([gallery_path, "index.html"]),
                              template_name,

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import argparse
 
 from static_gallery.utils import process_call

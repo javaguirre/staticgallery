@@ -1,1 +1,3 @@
 include *.txt
+recursive-include static_gallery/templates *.jinja2
+recursive-include static_gallery/static *.css *.js *.gif *.png
