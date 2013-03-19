@@ -100,6 +100,7 @@ def prepare_images(src_path, dst_path, gallery_name, image_list, reload_gallery)
         # TODO An option to rewrite images
         if not os.path.exists(image_dst_path) or reload_gallery:
             # FIXME PIL overrides original metadata when saving, we want to keep it
+            image_full.thumbnail(IMAGE_SIZE, Image.ANTIALIAS)
             image_full.save(image_dst_path, image_full.format)
 
         if not os.path.exists(os.path.join(image_thumb_path)) or reload_gallery:
